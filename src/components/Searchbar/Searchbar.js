@@ -3,11 +3,6 @@ import { useState } from "react";
 
 export const Searchbar = ({onSubmit}) => {
 
-    // static PropType = {
-    //     onSubmit: PropTypes.func.isRequired,
-    //     onChange: PropTypes.func,
-    // };
-
     const [name, setName] = useState('');
 
     const handleInputForm = (event) => {
@@ -43,3 +38,6 @@ export const Searchbar = ({onSubmit}) => {
     );
 };
 
+Searchbar.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+};

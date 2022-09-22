@@ -10,7 +10,6 @@ export const App = () => {
 
   const[imageName, setImageName] = useState('');
   const[images, setImages] = useState([]);
-  const[totalHits, setTotalHits] = useState(0);
   const[page, setPage] = useState(1);
   const[status, setStatus] = useState('idle');
   const[showModal, setShowModal] = useState(false);
@@ -24,10 +23,12 @@ export const App = () => {
   };
 
   useEffect(() => {
-    setStatus('pending');
-  
     apiFetchImages();
   }, [imageName, page]);
+
+  useEffect(() => {
+    setStatus('pending');
+  }, [imageName]);
 
 
   const apiFetchImages = () => {
@@ -35,7 +36,6 @@ export const App = () => {
             if (response.totalHits === 0) {
                 setStatus('empty');
             } else {
-              
               const resDes = response.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({ id, tags, webformatURL, largeImageURL }));
               setImages([...images, ...resDes]);
               setStatus('resolved');

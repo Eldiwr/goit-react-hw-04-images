@@ -3,10 +3,6 @@ import { useEffect} from "react";
 
 export const Modal = ({toggleModal, children}) => {
 
-    // static PropType = {
-    //     onClick: PropTypes.func.isRequired
-    // };
-
     useEffect(() => {
         window.addEventListener('keydown', onClose);
         return () => {
@@ -29,4 +25,8 @@ export const Modal = ({toggleModal, children}) => {
                 </div>
             </div>
     );
+};
+
+Modal.propTypes = {
+    toggleModal: PropTypes.func.isRequired,
 };
