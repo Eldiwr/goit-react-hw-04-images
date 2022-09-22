@@ -1,93 +1,74 @@
 import './App.css';
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { Searchbar } from "./Searchbar/Searchbar";
 import imagesApi from './services/services';
 import { Modal } from "components/Modal/Modal";
 
 
-export class App extends Component {
+export const App = () => {
 
-  state = {
-    imageName: '',
-    images: [],
-    totalHits: 0,
-    page: 1,
-    status: 'idle',
-    showModal: false,
-    modalImage: [],
-    tag: [],
+  const[imageName, setImageName] = useState('');
+  const[images, setImages] = useState([]);
+  const[totalHits, setTotalHits] = useState(0);
+  const[page, setPage] = useState(1);
+  const[status, setStatus] = useState('idle');
+  const[showModal, setShowModal] = useState(false);
+  const[modalImage, setModalImage] = useState([]);
+  const[tag, setTag] = useState([]);
+
+  const handleFormSubmit = (value) => {
+    setImageName(value);
+    setImages([]);
+    setPage(1);
   };
 
-  handleFormSubmit = (value) => {
-    this.setState({
-      imageName: value,
-      images: [],
-      page: 1,
-    });
-  };
-
-  componentDidUpdate(prevProps, prevState) {
-    const { imageName, page } = this.state;
-
-    if (prevState.imageName !== imageName) {
-        this.setState({status: 'pending'});
-      }
-    
-    if (prevState.page !== page || prevState.imageName !== imageName) {
-      this.apiFetchImages();   
-    };
-  };
+  useEffect(() => {
+    setStatus('pending');
   
-  apiFetchImages = () => {
-    const { imageName, page, images } = this.state;
+    apiFetchImages();
+  }, [imageName, page]);
 
+
+  const apiFetchImages = () => {
     imagesApi.fetchImages(imageName, page).then(response => {
             if (response.totalHits === 0) {
-                this.setState({ status: 'empty' });
+                setStatus('empty');
             } else {
+              
               const resDes = response.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({ id, tags, webformatURL, largeImageURL }));
-              this.setState({
-                images: [...images, ...resDes],        
-                    status: 'resolved',
-                });
+              setImages([...images, ...resDes]);
+              setStatus('resolved');
             };   
         });
   };
 
-  loadMore = () => {
-      this.setState((prevState) => ({
-      page: prevState.page + 1
-    }));    
+  const loadMore = () => {
+      setPage(prevState => prevState + 1);    
   };
   
-  toggleModal = () => {
-      this.setState({ showModal: !this.state.showModal })
+  const toggleModal = () => {
+    setShowModal(!showModal);
   };
             
-  openModal = (image, tag) => {
-      const modalImg = this.state.images.filter(e => {return e.webformatURL === image});
+  const openModal = (image, tag) => {
+      const modalImg = images.filter(e => {return e.webformatURL === image});
 
-    this.setState({
-      modalImage: modalImg[0],
-      tag: tag,
-    });
+    setModalImage(modalImg[0]);
+    setTag(tag);
 
-      this.toggleModal();        
+    toggleModal();        
   };
   
-  render() {
-    const { status, showModal, modalImage, images } = this.state;
     return (
       <div className="App">
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery status={status} images={images} openModal={this.openModal} loadMore={this.loadMore} />
+        <Searchbar onSubmit={handleFormSubmit} />
+        <ImageGallery status={status} images={images} openModal={openModal} loadMore={loadMore} />
         {showModal && (
-          <Modal toggleModal={this.toggleModal}>
+          <Modal toggleModal={toggleModal}>
             <img src={modalImage.largeImageURL} alt={modalImage.tags} />
           </Modal>
         )}
       </div>
     );
-  };
 };

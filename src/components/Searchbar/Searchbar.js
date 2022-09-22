@@ -1,33 +1,30 @@
 import PropTypes from 'prop-types';
-import { Component } from "react";
+import { useState } from "react";
 
-export class Searchbar extends Component {
+export const Searchbar = ({onSubmit}) => {
 
-    static PropType = {
-        onSubmit: PropTypes.func.isRequired,
-        onChange: PropTypes.func,
+    // static PropType = {
+    //     onSubmit: PropTypes.func.isRequired,
+    //     onChange: PropTypes.func,
+    // };
+
+    const [name, setName] = useState('');
+
+    const handleInputForm = (event) => {
+        setName(event.currentTarget.value);
     };
 
-    state = {
-       name: '', 
-    };
-
-    handleInputForm = (event) => {
-        this.setState({ name: event.currentTarget.value });
-    };
-
-    formSubmit = (event) => {
+    const formSubmit = (event) => {
         event.preventDefault();
 
-        this.props.onSubmit(this.state.name);
+        onSubmit(name);
         
-        this.setState({ name: '' });
+        setName('');
     };
     
-    render() {
         return (
             <header className="Searchbar">
-                <form className="SearchForm" onSubmit={this.formSubmit}>
+                <form className="SearchForm" onSubmit={formSubmit}>
                     <button type="submit" className="SearchForm-button">
                         <span className="SearchForm-button-label">Search</span>
                     </button>
@@ -39,10 +36,10 @@ export class Searchbar extends Component {
                         autoFocus
                         placeholder="Search images and photos"
                         name="name"
-                        onChange={this.handleInputForm}
+                        onChange={handleInputForm}
                     />
                 </form>
             </header>
-        );
-    };
+    );
 };
+

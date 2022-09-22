@@ -1,35 +1,32 @@
 import PropTypes from 'prop-types';
-import { Component } from "react";
+import { useEffect} from "react";
 
-export class Modal extends Component {
+export const Modal = ({toggleModal, children}) => {
 
-    static PropType = {
-        onClick: PropTypes.func.isRequired
-    };
+    // static PropType = {
+    //     onClick: PropTypes.func.isRequired
+    // };
 
-    componentDidMount() {
-        window.addEventListener('keydown', this.onClose);
-    };
+    useEffect(() => {
+        window.addEventListener('keydown', onClose);
+        return () => {
+            window.removeEventListener('keydown', onClose);
+        };
+    });
 
-    componentWillUnmount() {
-        window.removeEventListener('keydown',this.onClose);
-    };
-
-    onClose = (event) => {
+    const onClose = (event) => {
         if (event.currentTarget === event.target) {
-            this.props.toggleModal();
+            toggleModal();
         } else if (event.code === 'Escape') {
-            this.props.toggleModal();
+            toggleModal();
         };
     };
-
-    render() {
+    
         return (
-            <div className="Overlay" onClick={this.onClose}>
+            <div className="Overlay" onClick={onClose}>
                 <div className="Modal">
-                    {this.props.children}
+                    {children}
                 </div>
             </div>
-        );
-    };
+    );
 };
