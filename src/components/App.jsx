@@ -4,17 +4,20 @@ import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { Searchbar } from "./Searchbar/Searchbar";
 import imagesApi from './services/services';
 import { Modal } from "components/Modal/Modal";
+import { Loader } from './Loader/Loader';
 
 
 export const App = () => {
 
-  const[imageName, setImageName] = useState('');
-  const[images, setImages] = useState([]);
-  const[page, setPage] = useState(1);
-  const[status, setStatus] = useState('idle');
-  const[showModal, setShowModal] = useState(false);
-  const[modalImage, setModalImage] = useState([]);
-  const[tag, setTag] = useState([]);
+  const [imageName, setImageName] = useState('');
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [status, setStatus] = useState('idle');
+  const [showModal, setShowModal] = useState(false);
+  const [modalImage, setModalImage] = useState([]);
+  const [tag, setTag] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
 
   const handleFormSubmit = (value) => {
     setImageName(value);
@@ -23,28 +26,24 @@ export const App = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     apiFetchImages();
   }, [imageName, page]);
 
-  useEffect(() => {
-    setStatus('pending');
-  }, [imageName]);
-
-
   const apiFetchImages = () => {
     imagesApi.fetchImages(imageName, page).then(response => {
-            if (response.totalHits === 0) {
-                setStatus('empty');
-            } else {
-              const resDes = response.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({ id, tags, webformatURL, largeImageURL }));
-              setImages([...images, ...resDes]);
-              setStatus('resolved');
-            };   
-        });
+      if (response.totalHits === 0) {
+        setStatus('empty');
+      } else {
+        const resDes = response.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({ id, tags, webformatURL, largeImageURL }));
+        setImages([...images, ...resDes]);
+        setStatus('resolved');
+      };
+    }).finally(() => setLoading(false));
   };
 
   const loadMore = () => {
-      setPage(prevState => prevState + 1);    
+    setPage(prevState => prevState + 1);    
   };
   
   const toggleModal = () => {
@@ -64,6 +63,7 @@ export const App = () => {
       <div className="App">
         <Searchbar onSubmit={handleFormSubmit} />
         <ImageGallery status={status} images={images} openModal={openModal} loadMore={loadMore} />
+        {loading && <Loader loading={loading} />}
         {showModal && (
           <Modal toggleModal={toggleModal}>
             <img src={modalImage.largeImageURL} alt={modalImage.tags} />
