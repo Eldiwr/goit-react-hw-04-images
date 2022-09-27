@@ -28,15 +28,18 @@ export const App = () => {
   useEffect(() => {
     setLoading(true);
 
-    imagesApi.fetchImages(imageName, page).then(response => {
+        imagesApi.fetchImages(imageName, page).then(response => {
       if (response.totalHits === 0) {
         setStatus('empty');
       } else {
         const resDes = response.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({ id, tags, webformatURL, largeImageURL }));
-        setImages([...images, ...resDes]);
+        setImages(prevState => {
+          return [...prevState, ...resDes];
+        });
         setStatus('resolved');
       };
-    }).finally(() => setLoading(false));
+        }).finally(() => setLoading(false));
+    
   }, [imageName, page]);
 
   const loadMore = () => {
