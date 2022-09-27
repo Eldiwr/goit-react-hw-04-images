@@ -27,10 +27,7 @@ export const App = () => {
 
   useEffect(() => {
     setLoading(true);
-    apiFetchImages();
-  }, [imageName, page]);
 
-  const apiFetchImages = () => {
     imagesApi.fetchImages(imageName, page).then(response => {
       if (response.totalHits === 0) {
         setStatus('empty');
@@ -40,7 +37,7 @@ export const App = () => {
         setStatus('resolved');
       };
     }).finally(() => setLoading(false));
-  };
+  }, [imageName, page]);
 
   const loadMore = () => {
     setPage(prevState => prevState + 1);    
@@ -66,7 +63,7 @@ export const App = () => {
         {loading && <Loader loading={loading} />}
         {showModal && (
           <Modal toggleModal={toggleModal}>
-            <img src={modalImage.largeImageURL} alt={modalImage.tags} />
+            <img src={modalImage.largeImageURL} alt={tag} />
           </Modal>
         )}
       </div>

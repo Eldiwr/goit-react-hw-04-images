@@ -18,7 +18,7 @@ export const ImageGallery = ({status, images, openModal, loadMore}) => {
                         return <ImageGalleryItem key={image.id} image={image.webformatURL} alt={image.tags} openModal={openModal}/>
                     })}
                 </ul>         
-                <Button onClick={loadMore} />                                          
+                { images.length >= 11 && <Button onClick={loadMore} />}                                          
             </>)}
         </>
     );    
