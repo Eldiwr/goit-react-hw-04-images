@@ -33,9 +33,7 @@ export const App = () => {
         setStatus('empty');
       } else {
         const resDes = response.hits.map(({ id, tags, webformatURL, largeImageURL }) => ({ id, tags, webformatURL, largeImageURL }));
-        setImages(prevState => {
-          return [...prevState, ...resDes];
-        });
+        setImages(prevState => (page === 1 ? resDes : [...prevState, ...resDes]));
         setStatus('resolved');
       };
         }).finally(() => setLoading(false));
