@@ -26,7 +26,7 @@ export const App = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(page === 1 ? false : true);
 
         imagesApi.fetchImages(imageName, page).then(response => {
       if (response.totalHits === 0) {
